@@ -1,0 +1,94 @@
+﻿@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+  int targetID = ViewBag.TargetSalonID;
+  SalonModel salon_to_show = _db.Salons.Find(targetID);
+  NavigationListModel navlist = new NavigationListModel("");
+  navlist.ActionName.Add("index");
+  navlist.ControllerName.Add("home");
+  navlist.LinkText.Add("главная");
+
+  navlist.ActionName.Add("index");
+  navlist.ControllerName.Add("home");
+  navlist.LinkText.Add("автосалоны");
+  ViewBag.Title = "Отзывы о салоне " + salon_to_show.Name;
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <span style="float: left">
+      <a href="/Salon/@salon_to_show.TransName">@salon_to_show.Name</a>
+    </span>
+    <span style="margin-left: 10px; margin-right: 10px; float: left">></span>
+    <span style="color: gray">Отзывы</span>
+
+  </div>
+  <div class="NavigationCont" style="font-family: Arial">Отзывы об автосалоне @salon_to_show.Name</div>
+  using (Ajax.BeginForm(
+                "GetReviews",
+              new AjaxOptions
+              {
+                HttpMethod = "Post",
+                UpdateTargetId = "ReviewsContainer",
+                InsertionMode = InsertionMode.Replace,
+                OnComplete = ""
+              }))
+    {
+    <input type="hidden" id="ReviewsTypeSelector" name="DataType" value="All" />
+    <input type="hidden" id="SalonID" name="SalonID" value="@salon_to_show.ID" />
+    <input type="submit" id="ReviewsTypeSubmit" value="get" style="display: none;" />
+
+    <span class="UnselectedButton" id="AllReviewsButton">Все отзывы</span>
+    <div class="UnselectedButton" id="BestReviewsButton">Положительные</div>
+    <div class="UnselectedButton" id="BadlyReviewsButton">Отрицательные</div>
+    <div style="clear:both"></div>
+    }
+    <div id="ReviewsContainer"></div>
+    <script type="text/javascript">
+
+      document.getElementById('BadlyReviewsButton').onclick = function () {
+        if ($('#BadlyReviewsButton').attr('class') == 'UnselectedButton') {
+          $('#BestReviewsButton').removeClass();
+          $('#BestReviewsButton').toggleClass('UnselectedButton');
+
+          $('#AllReviewsButton').removeClass();
+          $('#AllReviewsButton').toggleClass('UnselectedButton');
+
+          $('#BadlyReviewsButton').removeClass();
+          $('#BadlyReviewsButton').toggleClass('SelectedButton');
+
+          $('#ReviewsTypeSelector').val('Badly');
+          $('#ReviewsTypeSubmit').click();
+        }
+      }
+      document.getElementById('BestReviewsButton').onclick = function () {
+        if ($('#BestReviewsButton').attr('class') == 'UnselectedButton') {
+          $('#BestReviewsButton').removeClass();
+          $('#BestReviewsButton').toggleClass('SelectedButton');
+          $('#AllReviewsButton').removeClass();
+          $('#AllReviewsButton').toggleClass('UnselectedButton');
+
+          $('#BadlyReviewsButton').removeClass();
+          $('#BadlyReviewsButton').toggleClass('UnselectedButton');
+
+          $('#ReviewsTypeSelector').val('Best');
+          $('#ReviewsTypeSubmit').click();
+        }
+      }
+      document.getElementById('AllReviewsButton').onclick = function () {
+        if ($('#AllReviewsButton').attr('class') == 'UnselectedButton') {
+          $('#AllReviewsButton').removeClass();
+          $('#AllReviewsButton').toggleClass('SelectedButton');
+          $('#BestReviewsButton').removeClass();
+          $('#BestReviewsButton').toggleClass('UnselectedButton');
+
+          $('#BadlyReviewsButton').removeClass();
+          $('#BadlyReviewsButton').toggleClass('UnselectedButton');
+
+          $('#ReviewsTypeSelector').val('All');
+          $('#ReviewsTypeSubmit').click();
+        }
+
+      }
+      $('#AllReviewsButton').click();
+    </script>
+    
+}

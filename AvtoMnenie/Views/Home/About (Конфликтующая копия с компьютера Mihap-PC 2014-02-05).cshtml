@@ -1,0 +1,18 @@
+﻿@using AvtoMnenie.Models
+@{
+  ViewBag.Title = "О проекте";
+
+  NavigationListModel navlist = new NavigationListModel();
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("главая");
+  navlist.ControllerName.Add("home");
+  navlist.TargetName = "о проекте";
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>
+  <div class="NavigationCont" style="font-family: Arial">авто-мнение.рф</div>
+  <div class="MainContent">
+    <p>здесь вся правда - матушка о проекте !</p>
+  </div>
+}

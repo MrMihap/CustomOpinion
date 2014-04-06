@@ -1,0 +1,102 @@
+﻿@using AvtoMnenie.Models
+@model AvtoMnenie.Models.CreateNewsModel
+@{
+    ViewBag.Title = "EditNews";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+@using (SalonContext _db = new SalonContext())
+{
+    NewsModel NewsToEdit = _db.News.Find(ViewBag.ID);
+
+    using (Html.BeginForm("EditNews/" + NewsToEdit.ID, "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+	
+    <div class="editor-label">
+        <label for="Header">Заголовок новости</label>
+    </div>
+    <div class="editor-field">
+        <input onchange="TransIt(Header, TransName)" value="@Html.Raw(NewsToEdit.Header)" class="text-box single-line" data-val="true" data-val-required="Требуется поле Заголовок новости." id="Header" name="Header" type="text" />
+        <span class="field-validation-valid" data-valmsg-for="Header" data-valmsg-replace="true"></span>
+    </div>
+    <div class="editor-label">
+            <label for="TransName">Название, транслитом, для поисковых систем и создания ссылки</label>
+        </div>
+    <div class="editor-field">
+        <input onclick="TransIt('Header', 'TransName')"  value="@NewsToEdit.TransName" class="text-box single-line" data-val="true" data-val-required="Требуется поле Заголовок новости." id="TransName" name="TransName" type="text" />
+        <span class="field-validation-valid" data-valmsg-for="TransName" data-valmsg-replace="true"></span>
+    </div>
+    <div class="editor-label">
+        <label for="PreViewText">Краткое соержание новости</label>
+    </div>
+    <div class="editor-field">
+        <textarea data-val="true" data-val-required="Требуется поле Краткое соержание новости." id="PreViewText" name="PreViewText">@Html.Raw(NewsToEdit.PreViewText)</textarea>
+        <span class="field-validation-valid" data-valmsg-for="PreViewText" data-valmsg-replace="true"></span>
+    </div>
+
+    <div class="editor-label">
+        <label for="FullText">Полный текст новости</label>
+    </div>
+    <div class="editor-field">
+        <textarea data-val="true" data-val-required="Требуется поле Полный текст новости." id="FullText" name="FullText">@Html.Raw(NewsToEdit.FullText)</textarea>
+        <span class="field-validation-valid" data-valmsg-for="FullText" data-valmsg-replace="true"></span>
+    </div>
+        if (NewsToEdit.FullImageID != null)
+        {
+            ImagesModel ImageToEdit = _db.Images.Find(NewsToEdit.FullImageID);
+		
+    <img src="@Url.Action("Getimage/" + NewsToEdit.FullImageID.ToString(), "Home")" />
+    <div class="editor-label">
+        <label for="Name">название картинки, латиницей</label>
+    </div>
+	
+    <div>
+        <span>Загрузить новое изображение для новости</span>
+        <input type="file" name="image" />
+    </div>
+    <div class="editor-field">
+        <input  value="@Html.Raw(ImageToEdit.Name)"  class="text-box single-line" data-val="true" data-val-required="Требуется поле название картинки, латиницей." id="Name" name="Name" type="text"/>
+        <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+    </div>
+    <div class="editor-label">
+        <label for="Alt">Замещающая надпись</label>
+    </div>
+    <div class="editor-field">
+        <input value="@ImageToEdit.Alt" class="text-box single-line" data-val="true" data-val-required="Требуется поле Замещающая надпись." id="Alt" name="Alt" type="text"  />
+        <span class="field-validation-valid" data-valmsg-for="Alt" data-valmsg-replace="true"></span>
+    </div>
+        }
+        else
+        {
+    <span>У этой статьи нет прикрепленного изображения, вы можете создать его тут</span>
+    
+    <div>
+        <span>выберите файл</span>
+        <input type="file" name="image" />
+    </div>          
+    <div class="editor-label">
+        <label for="Name">название картинки, латиницей</label>
+    </div>
+	
+    <div class="editor-field">
+        <input value="" class="text-box single-line" data-val="true" data-val-required="Требуется поле название картинки, латиницей." id="Name" name="Name" type="text" />
+        <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+    </div>
+    <div class="editor-label">
+        <label for="Alt">Замещающая надпись</label>
+    </div>
+    <div class="editor-field">
+        <input value="" class="text-box single-line" data-val="true" data-val-required="Требуется поле Замещающая надпись." id="Alt" name="Alt" type="text" />
+        <span class="field-validation-valid" data-valmsg-for="Alt" data-valmsg-replace="true"></span>
+    </div>
+        }
+    <p>
+        <input type="submit" value="Сохранить" />
+    </p>
+    }
+}

@@ -1,0 +1,62 @@
+﻿@model AvtoMnenie.Models.NewsModel
+@using AvtoMnenie.Models
+@{
+    ViewBag.Title = "NewsManagment";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+
+<h2>Список новостей</h2>
+@{
+    using (SalonContext _db = new SalonContext())
+    {
+        var AllNews = (from n in _db.News select n);
+    <table>
+        <tr>
+            <td>Заголовок</td>
+            <td>Автор</td>
+            <td>Дата публикации</td>
+            <td>Открыта</td>
+            <td>просмотр</td>
+            <td>Изменить</td>
+            <td>просмотров</td>
+        </tr>
+        @foreach (NewsModel currentnews in AllNews)
+        {
+            <tr>
+                <td>@currentnews.Header</td>
+                <td>@_db.Users.Find(currentnews.MasterUserID).Name</td>
+                <td>@currentnews.CreationTime</td>
+                <td>@if (currentnews.IsAllowed)
+                    {
+                        <span>открыта</span>
+                        @Html.ActionLink("закрыть","BlockNews/"+currentnews.ID.ToString())
+                    }
+                    else
+                    {
+                        <span>закрыта</span>
+                        @Html.ActionLink("открыть","ActivateNews/"+currentnews.ID.ToString())
+                    }
+                </td>
+                <td><a href="@("/news/"+ currentnews.TransName)">просмотр</a></td>
+                <td>@Html.ActionLink("изменить", "EditNews/"+currentnews.ID.ToString())</td>
+                @{int n = (from hits in _db.NewsHits where hits.NewsID == currentnews.ID select hits).Count();}
+                <td>@n</td>
+            </tr> 
+        }
+
+    </table>
+        <script type="text/javascript">
+
+            var rows = document.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+
+                if (i % 2 == 0) {
+                    //rows.item(i).style.backgroundColor = "#28B7FB"
+                } else {
+                    rows.item(i).style.backgroundColor = "grey";
+                }
+            }
+
+    </script>
+    }
+}

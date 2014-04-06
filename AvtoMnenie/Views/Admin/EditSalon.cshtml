@@ -1,0 +1,87 @@
+﻿@using AvtoMnenie.Models
+@model AvtoMnenie.Models.SalonModel
+@{
+    ViewBag.Title = "EditSalon";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+@using (Html.BeginForm())
+{
+    using (SalonContext _db = new SalonContext())
+    {
+        SalonModel salon_to_edit = _db.Salons.Find(ViewBag.id);
+    @Html.ValidationSummary(true)
+
+    <fieldset style="width: 400px">
+        <legend></legend>
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="editor-label">
+            <label for="Name">Название</label>
+        </div>
+        <div class="editor-field">
+            <input  class="text-box single-line" data-val="true" data-val-length="Too long name" data-val-length-max="100" data-val-required="Требуется поле Название." id="Name" name="Name" type="text"
+                value="@salon_to_edit.Name" />
+            <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+        </div>
+
+        <div class="editor-label">
+            <label for="TransName">Название, транслитом, для поисковых систем и создания ссылки</label>
+        </div>
+        <div class="editor-field">
+            <input onclick="TransIt('Name', 'TransName')" value="@Html.Raw(salon_to_edit.TransName)" class="text-box single-line" data-val="true" data-val-required="Требуется поле Заголовок новости." id="TransName" name="TransName" type="text" />
+            <span class="field-validation-valid" data-valmsg-for="TransName" data-valmsg-replace="true"></span>
+        </div>
+        <div class="editor-field">
+            <textarea cols="10" rows="1" data-val="true" data-val-length="Too long about text" data-val-length-max="140" data-val-required="Требуется поле О салоне." id="About" name="About">
+            @Html.Raw(salon_to_edit.About)
+            </textarea>
+            <span class="field-validation-valid" data-valmsg-for="About" data-valmsg-replace="true"></span>
+        </div>
+         <div class="editor-label">
+            @Html.LabelFor(model => model.AboutFull)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.AboutFull, new { @id = "TextAreaForAboutFull"})
+            @Html.ValidationMessageFor(model => model.AboutFull)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeWorkingMode)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeWorkingMode, new { @Value = salon_to_edit.TimeWorkingMode})
+            @Html.ValidationMessageFor(model => model.TimeWorkingMode)
+        </div>
+        <div class="editor-label">
+            <label for="Addres">Адрес</label>
+        </div>
+        <div class="editor-field">
+            <input class="text-box single-line" data-val="true" data-val-length="Too long addres" data-val-length-max="150" data-val-required="Требуется поле Адрес." id="Addres" name="Addres" type="text" 
+                value="@salon_to_edit.Addres" />
+            <span class="field-validation-valid" data-valmsg-for="Addres" data-valmsg-replace="true"></span>
+        </div>
+        <div class="editor-label">
+            <label for="PhoneNamber">Контактный телефон</label>
+        </div>
+        <div class="editor-field">
+            <input class="text-box single-line" data-val="true" data-val-length="Too long phone number" data-val-length-max="18" data-val-required="Требуется поле Контактный телефон." id="PhoneNamber" name="PhoneNamber" type="text" 
+                value="@salon_to_edit.PhoneNamber" />
+            <span class="field-validation-valid" data-valmsg-for="PhoneNamber" data-valmsg-replace="true"></span>
+        </div>
+        <div>
+            @{
+        List<SalosAreasModel> areas_list = new List<SalosAreasModel>();
+        areas_list = _db.Areas.ToList();
+        var areas_items = new SelectList(areas_list, "ID", "Name");
+            }
+
+            @Html.LabelFor(model => model.SalonAreaID)
+            <br />
+            @Html.DropDownListFor(model => model.SalonAreaID, areas_items)
+        </div>
+        <p>
+            <input type="submit" value="Сохранить" />
+        </p>
+        @Html.ActionLink("установить координаты", "CreateCoordsForSalon", new {id = salon_to_edit.ID })
+    </fieldset>
+    }
+}

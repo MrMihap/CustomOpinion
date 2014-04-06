@@ -1,0 +1,139 @@
+﻿<script type="text/javascript">
+  function SalonListLoad() {
+    //myMap.destroy();
+    $('#MapContainer').empty();
+  }
+</script>
+@{
+  ViewBag.Title = "Каталог автосалонов";
+}
+<!-- Тело страницы -->
+@using AvtoMnenie.Models
+
+@using (SalonContext _db = new SalonContext())
+{
+  NavigationListModel navlist = new NavigationListModel();
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("главная");
+  navlist.ControllerName.Add("home");
+  navlist.TargetName = "каталог автосалонов";
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>  
+  <div class="NavigationCont" style="font-family: Arial">Каталог Автосалонов и Автоцентров</div>
+  <div class="MainContent">
+    <table border="0" id="ContainerTable">
+      <tr>
+        <!--Левая колонка -->
+        <td width="460" height="267" style="vertical-align: top;">
+          <div class="FilterContainer">
+            @{using (Ajax.BeginForm(
+              "GetSalonsByArea",
+              new AjaxOptions
+              {
+                HttpMethod = "Post",
+                UpdateTargetId = "TopSalonsContainer",
+                InsertionMode = InsertionMode.Replace,
+                OnBegin = "SalonListLoad();"
+              }))
+              {
+              <select id="RegionFilterSelector" name="AreaSelect">
+                @foreach (SalosAreasModel area in _db.Areas)
+                {
+                  <option id="@area.ID">@area.Name </option>
+                }
+              </select>
+              <input type="hidden" id="FeedBackFilter" name="FeedBackFilter" value="ByDefault">
+              <input type="submit" id="RegionFilterButton" value="Показать" />              
+              }
+            }
+            <div class="FilterActiveSelector" id="AllSalonsFilter">Все салоны</div>
+            <div class="FilterPassiveSelector" id="FeedBackedSalonFilter">С отзывами</div>
+          </div>
+          <div style="clear: both"></div>
+
+          <!-- Список автосалонов -->
+          <div class="TopSalonsContainer" id="TopSalonsContainer"></div>
+        </td>
+        <!--Правая колонка -->
+        <td width="480" id="ContainerTableElement">
+          <div class="MapContainer" id="MapContainer"></div>
+
+          <!--Переключатель -->
+          <div class="FeedbackNewsSwitchContainer">
+            <div class="FeedbackNewsSwitchContainer">
+              @{using (Ajax.BeginForm(
+                "GetTopNewsOrTopReviews",
+              new AjaxOptions
+              {
+                HttpMethod = "Post",
+                UpdateTargetId = "TopNewsOrReviewsContainer",
+                InsertionMode = InsertionMode.Replace,
+                OnComplete=""
+              }))
+                {
+                <input type="hidden" id="NewsOrReviewsSelector" name="DataType" value="News" />
+                <input type="submit" id="NewsOrReviewsSubmit" value="get" style="display: none;" />
+
+                <div class="SelectedButton" id="NewsButton">Новости</div>
+                <div class="UnselectedButton" id="LatestFeedBacksButton">Последние отзывы </div>
+                }
+              }
+            </div>
+          </div>
+          <!--News list -->
+          <div id="TopNewsOrReviewsContainer">
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <script type="text/javascript">
+
+    document.getElementById('AllSalonsFilter').onclick = function () {
+      if ($('#AllSalonsFilter').attr('class') == 'FilterPassiveSelector') {
+        $('#AllSalonsFilter').removeClass();
+        $('#AllSalonsFilter').toggleClass('FilterActiveSelector');
+        $('#FeedBackedSalonFilter').removeClass()
+        $('#FeedBackedSalonFilter').toggleClass('FilterPassiveSelector');
+        $('#FeedBackFilter').val('ByDefault');
+        $('#RegionFilterButton').click();
+      }
+    };
+    document.getElementById('FeedBackedSalonFilter').onclick = function () {
+      if ($('#FeedBackedSalonFilter').attr('class') == 'FilterPassiveSelector') {
+        $('#AllSalonsFilter').removeClass();
+        $('#AllSalonsFilter').toggleClass('FilterPassiveSelector');
+        $('#FeedBackedSalonFilter').removeClass()
+        $('#FeedBackedSalonFilter').toggleClass('FilterActiveSelector');
+        $('#FeedBackFilter').val('WithFB');
+        
+        $('#RegionFilterButton').click();
+      }
+    };
+    document.getElementById('NewsButton').onclick = function () {
+      if ($('#NewsButton').attr('class') == 'UnselectedButton') {
+        $('#NewsButton').removeClass();
+        $('#NewsButton').toggleClass('SelectedButton');
+        $('#LatestFeedBacksButton').removeClass();
+        $('#LatestFeedBacksButton').toggleClass('UnselectedButton');
+        $('#NewsOrReviewsSelector').val('News');
+        $('#NewsOrReviewsSubmit').click();
+      }
+    }
+    document.getElementById('LatestFeedBacksButton').onclick = function () {
+      if ($('#LatestFeedBacksButton').attr('class') == 'UnselectedButton') {
+        $('#LatestFeedBacksButton').removeClass();
+        $('#LatestFeedBacksButton').toggleClass('SelectedButton');
+        $('#NewsButton').removeClass();
+        $('#NewsButton').toggleClass('UnselectedButton');
+        $('#NewsOrReviewsSelector').val('Reviews');
+        $('#NewsOrReviewsSubmit').click();
+      }
+    }
+    $('#RegionFilterButton').click();
+    $('#NewsOrReviewsSubmit').click();
+    //document.getElementById('RegionFilterButton').onclick = function () {  myMap.destroy; }
+  </script>
+}

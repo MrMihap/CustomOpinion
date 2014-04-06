@@ -1,0 +1,60 @@
+﻿@model AvtoMnenie.Models.RegisterModel
+@if (ViewBag.IsRegistered == null)
+{
+  ViewBag.IsRegistered = false;
+}
+@if (ViewBag.IsRegistered)
+{
+  <script type="text/javascript">
+    location.reload();
+  </script>
+}
+else
+{
+  using (Ajax.BeginForm(
+    "Register",
+    "Account",
+    new AjaxOptions
+    {
+      HttpMethod = "Post",
+      InsertionMode = InsertionMode.Replace,
+      UpdateTargetId = "RegisterHiddenBlock"
+    }))
+  {
+  @Html.ValidationSummary(true)
+
+  <div class="RegisterFormlabel">Регистрация</div>
+  <div class="editor-label">
+    @Html.LabelFor(model => model.Email)
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(model => model.Email)
+    @Html.ValidationMessageFor(model => model.Email)
+  </div>
+  <div class="editor-label">
+    @Html.LabelFor(model => model.Name)
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(model => model.Name)
+    @Html.ValidationMessageFor(model => model.Name)
+  </div>
+  <div class="editor-label">
+    @Html.LabelFor(model => model.Password)
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(model => model.Password)
+    @Html.ValidationMessageFor(model => model.Password)
+  </div>
+
+  <div class="editor-label">
+    @Html.LabelFor(model => model.ConfirmPassword)
+  </div>
+  <div class="editor-field">
+    @Html.EditorFor(model => model.ConfirmPassword)
+    @Html.ValidationMessageFor(model => model.ConfirmPassword)
+  </div>
+  <p>
+    <input type="submit" value="Зарегистрироваться" />
+  </p>
+  }
+}

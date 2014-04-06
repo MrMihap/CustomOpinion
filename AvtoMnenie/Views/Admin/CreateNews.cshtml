@@ -1,0 +1,68 @@
+﻿@model AvtoMnenie.Models.CreateNewsModel
+@{
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@using (Html.BeginForm("CreateNews", "Admin",
+    FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>CreateNewsModel</legend>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Header)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Header)
+            @Html.ValidationMessageFor(model => model.Header)
+        </div>
+        <div class="editor-label">
+            <label for="TransName">Название, транслитом, для поисковых систем и создания ссылки</label>
+        </div>
+        <div class="editor-field">
+            <input onclick="TransIt('Header', 'TransName')"  value="" class="text-box single-line" data-val="true" data-val-required="Требуется поле Заголовок новости." id="TransName" name="TransName" type="text" />
+            <span class="field-validation-valid" data-valmsg-for="TransName" data-valmsg-replace="true"></span>
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PreViewText)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.PreViewText)
+            @Html.ValidationMessageFor(model => model.PreViewText)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FullText)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.FullText)
+            @Html.ValidationMessageFor(model => model.FullText)
+        </div>
+        <div>
+            Upload new image:
+      <input type="file" name="image" />
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Alt)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Alt)
+            @Html.ValidationMessageFor(model => model.Alt)
+        </div>
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}

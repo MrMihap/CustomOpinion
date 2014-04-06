@@ -1,0 +1,53 @@
+﻿@{
+  ViewBag.Title = "AreaManagment";
+  Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+@using AvtoMnenie.Models
+@{
+  using (SalonContext _db = new SalonContext())
+  {
+    var AllAreas = (from a in _db.Areas select a);
+  <table>
+    <tr>
+      <td>
+        <p>id</p>
+      </td>
+      <td>
+        <p>Название</p>
+      </td>
+      <td>
+        <p>Описание</p>
+      </td>
+      <td>
+        <p>Координаты</p>
+      </td>
+      <td>
+        <p>Автор</p>
+      </td>
+      <td>@Html.ActionLink("Создать новую", "CreateArea")</td>
+    </tr>
+    @foreach (SalosAreasModel area in AllAreas)
+    {
+      <tr>
+        <td>@area.ID</td>
+        <td>@area.Name</td>
+        <td>
+          <div style="max-width: 320px;">@Html.Raw(area.About)</div>
+        </td>
+        <td>
+          @if (area.MapCoordsID == null)
+          { 
+            @Html.ActionLink("установить", "SetCoordsForAreas", new { id = area.ID });
+          }
+          else
+          { 
+            @Html.ActionLink("изменить", "EditCoords/" + area.MapCoordsID.ToString());
+          }
+        </td>
+        <td>@((from user in _db.Users where user.Id == area.MasterUserID select user).FirstOrDefault().Name)</td>
+        <td></td>
+      </tr>
+    }
+  </table>
+  }
+}

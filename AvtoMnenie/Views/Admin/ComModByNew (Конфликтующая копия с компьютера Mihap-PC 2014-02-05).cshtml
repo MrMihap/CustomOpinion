@@ -1,0 +1,53 @@
+﻿@using AvtoMnenie.Models;
+@{
+  Layout = null;
+  using (SalonContext _db = new SalonContext())
+  {
+    if ((from comment in _db.Comments where comment.IsNew orderby comment.PostDate descending select comment).Count() > 0)
+    {
+      var AllComments = (from comment in _db.Comments where comment.IsNew orderby comment.PostDate descending select comment);    
+  <table border="0">
+    <tr>
+      <td>id</td>
+      <td>дата</td>
+      <td>имя пользователя</td>
+      <td>заголовок</td>
+      <td style="max-width: 600px">содержание</td>
+      <td>действия</td>
+    </tr>
+    @foreach (CommentModel comment in AllComments)
+    {
+      <tr>
+        <td>@comment.ID</td>
+        <td>@comment.PostDate.ToString()</td>
+        <td>@((from u in _db.Users where u.Id == comment.MasterUserID select u).First().Name)</td>
+        <td>@comment.Header</td>
+        <td>@comment.Text</td>
+        <td>
+          @Html.Partial("~/Views/AdminCommon/CommentAllowDisAllow.cshtml", comment)
+        </td>
+      </tr>
+    }
+  </table>
+    }
+    else
+    {
+      <p>Нет непроверенных отзывов</p>
+    }
+  }
+  
+}
+<script type="text/javascript">
+
+  var rows = document.getElementsByTagName('tr');
+  for (var i = 0; i < rows.length; i++) {
+
+    if (i % 2 == 0) {
+      //rows.item(i).style.backgroundColor = "#28B7FB"
+    }
+    else {
+      rows.item(i).style.backgroundColor = "#bbbbbb";
+    }
+  }
+
+</script>

@@ -1,0 +1,117 @@
+﻿@{
+  ViewBag.Title = "Оставить комментарий";
+}
+@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+  int targetID = ViewBag.TargetSalonID;
+  SalonModel salon_to_show = _db.Salons.Find(targetID);
+  NavigationListModel navlist = new NavigationListModel("");
+  navlist.ActionName.Add("index");
+  navlist.ControllerName.Add("home");
+  navlist.LinkText.Add("главая");
+  navlist.ActionName.Add("index");
+  navlist.ControllerName.Add("home");
+  navlist.LinkText.Add("автосалоны");
+  string CurrentUserName = HttpContext.Current.User.Identity.Name.ToString();
+  int CurrentUserID = 0;
+  User CurrentUser = (from u in _db.Users where u.Email.Equals(CurrentUserName) select u).FirstOrDefault();
+  if (CurrentUser != null)
+  {
+    CurrentUserID = CurrentUser.Id;
+  }
+  var AllReviews = (from r in _db.Comments
+                    where r.SalonID == salon_to_show.ID && (r.IsAllowedToShow || CurrentUserID == r.MasterUserID)
+                    orderby r.PostDate descending
+                    select r);
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <span style="float: left">
+      <a href="/Salon/@salon_to_show.TransName">@salon_to_show.Name</a>
+    </span>
+    <span style="margin-left: 10px; margin-right: 10px; float: left">></span>
+    <span style="color: gray">Оставить отзыв</span>
+
+    <div class="NavigationCont" style="font-family: Arial;">Отзывы и комментарии пользователей</div>
+    @foreach (CommentModel comment_to_show in AllReviews)
+    {
+      var AllSubComments = (from subc in _db.SubComments
+                            where subc.MainCommentID == comment_to_show.ID
+                            orderby subc.PostDate
+                            select subc);
+      <div class="FullSalonReviewContainer">
+        <div class="FullSalonReviewText">@comment_to_show.Text</div>
+        <div class="FullSalonReviewUserDate">
+          <span class="SalonSmallCommentName">@_db.Users.Find(comment_to_show.MasterUserID).Name</span>
+          <span style="margin-left: 10px; margin-right: 10px;">- </span>
+          <span class="SalonSmallCommentDate">@comment_to_show.PostDate.Date.ToShortDateString()</span>
+        </div>
+        @if (AllSubComments.Count() == 0 || true)
+        {
+          <div class="FullSalonReviewAnswerLink">
+            <a href="#", onclick="$('#AnswerCont@(comment_to_show.ID)').show('fast');return false;">ответить</a>
+
+            <div class="FullSalonReviewAnswerContainer" id="AnswerCont@(comment_to_show.ID)">
+              @if (Request.IsAuthenticated)
+              {
+                <form action="/home/postanswer" method="post">
+                  <input type="hidden" name="SalonID" value="@salon_to_show.ID" />
+                  <input type="hidden" name="CommentID" value="@comment_to_show.ID" />
+                  <textarea name="Text" placeholder="Ваш комментарий" cols="60" rows="8" style="border: none; margin-top: 20px; font-family: Arial;"></textarea>
+                  <br />
+                  <input type="submit" style="height: 40px; width: 146px;" value="ответить" />
+                </form>
+              }
+              else
+              {
+                <p>Только зарегистрированные пользователи могут оставлять отвечать на комментарии к автосалонам.
+                  Войдите или зарегистрируйтесь.
+                </p>
+              }
+
+            </div>
+          </div>
+        }
+      </div>
+        
+      <div class="FullSalonDottedUnderLine"></div>
+        
+        foreach (SubComments subcom in AllSubComments)
+        {
+      <div class="FullSalonReviewSubContainer">
+        <div class="FullSalonReviewText">@subcom.CommentText</div>
+        <div class="FullSalonReviewUserDate">
+          <span class="SalonSmallCommentName">@_db.Users.Find(subcom.MasterUserID).Name</span>
+          <span style="margin-left: 10px; margin-right: 10px;">- </span>
+          <span class="SalonSmallCommentDate">@subcom.PostDate.Date.ToShortDateString()</span>
+        </div>
+      </div>
+      <div class="FullSalonDottedUnderLine"></div>
+        }
+    }
+  </div>
+  <div class="NavigationCont" style="font-family: Arial;">Ваш отзыв</div>
+    if (Request.IsAuthenticated)
+    {
+  <form name="AddReview" method="post" action="/Home/SaveComment/">
+    <input type="hidden" name="TargetSalonID" value="@salon_to_show.ID"/>
+    <input type="text" id="Header" name="Header" placeholder="Заголовок" style="border: none; font-family: Arial; -webkit-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); -moz-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); box-shadow: 0px 10px 20px rgba(207, 207, 207, .3);" />
+    <br />
+    <textarea name="Text" placeholder="Ваш комментарий" cols="60" rows="8" style="border: none; margin-top: 20px; font-family: Arial; -webkit-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); -moz-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); box-shadow: 0px 10px 20px rgba(207, 207, 207, .3);"></textarea>
+    <br />
+    <input type="radio" name="Like" checked="checked" value="Yes" />
+    <span style="font-family: Arial; color: GrayText; font-size: 12px;">понравился</span><input type="radio" name="Like" value="No" />
+    <span style="font-family: Arial; color: GrayText; font-size: 12px;">не понравился</span><br />
+    <input type="submit" style="height: 40px; width: 146px;" value="Добавить" />
+  </form>
+    }
+    else
+    {
+  <p>
+    Только зарегестрированные пользователи могут оставляться комментарии!<br />
+    Что бы оставить комментарий, вам необходимо войти или зарегистрироваться
+  </p>
+    }
+
+}
+

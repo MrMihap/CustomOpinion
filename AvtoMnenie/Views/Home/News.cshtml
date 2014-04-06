@@ -1,0 +1,50 @@
+﻿@using AvtoMnenie.Models
+@{
+    NavigationListModel navlist = new NavigationListModel();
+    navlist.ActionName.Add("index");
+    navlist.LinkText.Add("главая");
+    navlist.ControllerName.Add("home");
+    navlist.TargetName = "новости";
+	ViewBag.Title = "Новости";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+    <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>  
+  <div class="NavigationCont" style="font-family: Arial">Новости</div>
+}
+<div class="NewsListBody">
+	<table>
+		@{
+			using (SalonContext _db = new SalonContext())
+			{
+				var top10news = (from news in _db.News where news.IsAllowed orderby news.ID descending select news).Take(10);
+				foreach (var news in top10news)
+				{
+			<tr>
+				<td>
+					<div class="NewsListElement">
+						<div style="min-height:220px">
+							<div class="NewsListImagePreviewContainer">
+								<img src="@Url.Action("Getimage/" + news.FullImageID.ToString(), "Home")" width="220px"/>
+							</div>
+							<div class="NewsListMainBodyContainer">
+								<div class="NewsListDateOfPostContainer">@news.CreationTime</div>
+								<div>
+									<a href="/Home/ShowNews/@news.ID">@news.Header</a>
+								</div>
+								<div class="NewsListPreViewText">@Html.Raw(news.PreViewText)
+								</div>
+							</div>
+						</div>
+						<div style="clear:both;"></div>
+						  <hr />
+					</div>
+					
+				</td>
+			</tr>
+				}
+			}
+		}
+	</table>
+</div>

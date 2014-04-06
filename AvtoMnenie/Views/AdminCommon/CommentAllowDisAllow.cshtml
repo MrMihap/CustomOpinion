@@ -1,0 +1,39 @@
+﻿@model AvtoMnenie.Models.CommentModel
+@using AvtoMnenie.Models
+@{
+  Layout = null;
+}
+<div id="companel@(Model.ID)">
+  @using (Ajax.BeginForm(
+    "EditCommentRooles",
+    new AjaxOptions
+    {
+      HttpMethod = "Post",
+      UpdateTargetId = "companel" + Model.ID,
+      InsertionMode = InsertionMode.Replace
+    }))
+  {
+    <input type="hidden" name="CommentID" value="@Model.ID" />
+    <input type="hidden" id="ActionType@(Model.ID)" name="ActionType" value="None"/>
+    <input type="submit" id="EditCommentRooles@(Model.ID)" style="display:none" />
+    if (!Model.IsAllowedToShow && !Model.IsNew)
+    {
+    <span>запрещен</span>
+    }
+    if (Model.IsAllowedToShow && !Model.IsNew)
+    {
+    <span>разрешен</span>
+    }
+    if (Model.IsNew || !Model.IsAllowedToShow)
+    {
+    <a href="#" onclick="$('#ActionType@(Model.ID)').val('Allow'); $('#EditCommentRooles@(Model.ID)').click();">Разрешить</a><br />
+    }
+    if (Model.IsNew || Model.IsAllowedToShow)
+    {
+    <a href="#" onclick="$('#ActionType@(Model.ID)').val('DisAllow'); $('#EditCommentRooles@(Model.ID)').click();">Запретить</a>
+    }
+  }
+
+
+
+</div>

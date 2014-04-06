@@ -1,0 +1,61 @@
+﻿@charset "utf-8";
+/* CSS Document */
+.NewsListBody
+{
+	width: 1024px;
+	padding-left: 40px;
+}
+.NewsListElement
+{
+	min-height: 222px;
+	margin-top: 38px;
+	overflow: hidden;
+}
+.NewsListImagePreviewContainer
+{
+	width: 220px;
+	float: left;
+	margin-right: 20px;
+}
+.NewsListMainBodyContainer
+{
+	width: 784px;
+}
+.NewsListDateOfPostContainer
+{
+	color:grey;
+	font-weight:100;
+}
+.NewsListPreViewText
+{
+	
+}
+div.NewsListHeaderContainer a{
+	color: blue;
+	font-size: 18px;
+	font-weight: bold;
+	text-decoration:underline;
+}
+.NewsNavigationContainer {
+    padding-top: 26px;
+    margin-left: 25px;
+}
+.FullNewsContainer {
+    padding-left: 50px;
+}
+.FullNewsDateContainer {
+    margin-top: 80px;
+    color: gray;
+    font-style: italic;
+}
+.FullNewsHeaderContainer {
+    margin-top: 10px;
+    font-size: 20pt;
+}
+.FullNewsImageContainer {
+    margin-top: 15px;
+}
+FullNewsTextContainer {
+    margin-top: 25px;
+    margin-bottom: 100px;
+}

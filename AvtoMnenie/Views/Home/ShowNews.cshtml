@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "новости автомнение.рф";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+@using AvtoMnenie.Models
+@{
+    using (SalonContext _db = new SalonContext())
+    {
+
+        NewsModel news = _db.News.Find(ViewBag.id);
+        NavigationListModel navlist = new NavigationListModel();
+        navlist.ActionName.Add("index");
+        navlist.LinkText.Add("главная");
+        navlist.ControllerName.Add("home");
+        navlist.ActionName.Add("news");
+        navlist.LinkText.Add("новости");
+        navlist.ControllerName.Add("home");
+        navlist.TargetName = news.Header;
+    <div class="NewsNavigationContainer">
+        @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+        <div style="clear: both;"></div>
+    </div>
+    <div class="FullNewsContainer">
+        <div class="FullNewsDateContainer">@news.CreationTime</div>
+        <div class="FullNewsHeaderContainer">
+            <span>@news.Header</span>
+        </div>
+        <div class="FullNewsImageContainer">
+            <img src="@Url.Action("Getimage/" + news.FullImageID.ToString(), "Home")" height="400"/>
+        </div>
+
+        @if (news.FullText != null)
+        {
+            <div class="FullNewsTextContainer">
+
+                @Html.Raw(news.FullText)
+
+            </div>
+        }
+        else
+        {
+            <div class="FullNewsTextContainer">
+
+                @Html.Raw(news.PreViewText)
+
+            </div>
+        }
+    </div>
+        NewsHitModel hit = new NewsHitModel();
+        hit.NewsID = news.ID;
+        hit.VisitDate = DateTime.Now;
+        if(Request.IsAuthenticated)
+        {
+            hit.IsAuthorised = true;
+        }
+        else
+        {
+            hit.IsAuthorised = false;
+        }
+        _db.NewsHits.Add(hit);
+        _db.SaveChanges();
+    }
+}

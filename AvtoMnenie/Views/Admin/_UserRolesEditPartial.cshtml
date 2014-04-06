@@ -1,0 +1,73 @@
+﻿@model AvtoMnenie.Models.User
+@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+  Layout = null;
+  try
+  {
+    User UserContext = _db.Users.Find(Model.Id);
+    var UserRoles = (from rim in _db.UsersInRoles
+                     join role in _db.Roles on rim.RoleID equals role.Id
+                     where rim.UserID == UserContext.Id
+                     select role);
+    var AllRoles = (from role in _db.Roles select role);
+    List<string> UserRolesStrings = new List<string>();
+    List<string> AllRolesStrings = new List<string>();
+
+    foreach (Role role in UserRoles)
+    {
+      UserRolesStrings.Add(role.Name);
+    }
+    foreach (Role role in AllRoles)
+    {
+      AllRolesStrings.Add(role.Name);
+    }
+  <div id="@("UserCont" + UserContext.Id)">
+    @foreach (Role role in AllRoles)
+    {
+      if (UserRolesStrings.Contains(role.Name))
+      {
+        using (Ajax.BeginForm("EditUserRoles", new AjaxOptions
+        {
+          HttpMethod = "Post",
+          OnSuccess = "alert('успешно')",
+          UpdateTargetId = "UserCont" + UserContext.Id.ToString(),
+          InsertionMode = InsertionMode.Replace
+        }))
+        {
+      <input type="hidden" name="UserID" value="@UserContext.Id" style="display:none">
+      <input type="hidden" name="RoleID" value="@role.Id" style="display:none"/>
+      <input type="hidden" name="ActionType" value="Remove" style="display: none" />
+      <input type="submit" style="display: none" id="@("del" + UserContext.Id.ToString() + role.Name)" />
+      <span>удалить с роли: <a href="#" onclick="$('#@("del" + UserContext.Id.ToString() + role.Name)').click(); return false">@role.Name</a>
+      </span>
+        }
+      }
+      if (!UserRolesStrings.Contains(role.Name))
+      {
+        using (Ajax.BeginForm("EditUserRoles", new AjaxOptions
+        {
+          HttpMethod = "Post",
+          OnSuccess = "alert('успешно')",
+          UpdateTargetId = "UserCont" + UserContext.Id.ToString(),
+          InsertionMode = InsertionMode.Replace
+        }))
+        {
+      <input type="hidden" name="UserID" value="@UserContext.Id" style="display:none">
+      <input type="hidden" name="RoleID" value="@role.Id" style="display:none"/>
+      <input type="hidden" name="ActionType" value="Add" style="display: none" />
+      <input type="submit" style="display: none" id="@("add" + UserContext.Id.ToString() + role.Name)" />
+      <span>установить на роль: </span>
+      <a href="#" onclick=
+    "$('#@("add" + UserContext.Id.ToString() + role.Name)').click(); 
+     return false">@role.Name</a>
+        }
+      }
+    }
+  </div>
+  }
+  catch (ArgumentNullException ex)
+  {
+  <p>Error: @ex.Message</p>
+  }
+}

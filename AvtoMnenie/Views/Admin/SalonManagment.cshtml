@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "_LayoutAdminPage.cshtml";
+}
+
+@using AvtoMnenie.Models
+@{
+    using (SalonContext _db = new SalonContext())
+    {
+        var AllSalons = (from s in _db.Salons select s);         
+        <table>
+        <tr>
+            <td>id</td>
+            <td>name</td>
+            <td>master</td>
+            <td>телефон</td>
+            <td>адрес</td>
+            <td>Дата создания</td>
+            <td>__________________</td>
+            <td>Просмотров</td>
+        </tr>
+        @foreach (var salon in AllSalons)
+        {
+            <tr>
+                <td>@salon.ID</td>
+                <td>@salon.Name</td>
+                <td>@_db.Users.Find(salon.MasterUserID).Name</td>
+                <td>@salon.PhoneNamber</td>
+                <td>@salon.Addres</td>
+                <td>@salon.DateCreation</td>
+                <td>
+                    @Html.ActionLink("удалить", "DeleteSalon/" + salon.ID.ToString())
+                    @Html.ActionLink("изменить", "EditSalon/" + salon.ID.ToString())
+                </td>
+                <td>@_db.SalonHits.Count(c => c.SalonID == salon.ID)</td>
+            </tr>
+        }
+    </table>
+    
+    
+    <script type="text/javascript">
+
+        var rows = document.getElementsByTagName('tr');
+        for (var i = 0; i < rows.length; i++) {
+
+            if (i % 2 == 0) {
+                //rows.item(i).style.backgroundColor = "#28B7FB"
+            }
+            else {
+                rows.item(i).style.backgroundColor = "#bbbbbb";
+            }
+        }
+
+    </script>
+    }
+}

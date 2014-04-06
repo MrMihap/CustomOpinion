@@ -1,0 +1,107 @@
+﻿@model AvtoMnenie.Models.MapCoordsModel
+
+@{
+    ViewBag.Title = "CreateCoordsForSalon";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+@using (Html.BeginForm("CreateCoordsForSalon", "Admin", new { id = ViewBag.id }))
+{
+    @Html.ValidationSummary(true)
+    <table>
+        <tr>
+            <td width="460">
+                <fieldset>
+                    <legend>Координаты автосалоа</legend>
+
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.X)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.X)
+                        @Html.ValidationMessageFor(model => model.X)
+                    </div>
+
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Y)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Y)
+                        @Html.ValidationMessageFor(model => model.Y)
+                    </div>
+
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.zoom)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.zoom)
+                        @Html.ValidationMessageFor(model => model.zoom)
+                    </div>
+
+                    <p>
+                        <input type="submit" value="Create" />
+                    </p>
+                </fieldset>
+            </td>
+       
+            <td width="460">
+                <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+                <div id="map" style="width: 400px; height: 300px"></div>
+                <script type="text/javascript">
+                  ymaps.ready(init);
+                  var myMap;
+
+                  function init() {
+                    myMap = new ymaps.Map("map", {
+                      center: [55.76, 37.64], 
+                      zoom: 10
+                    }, {
+                      balloonMaxWidth: 200
+                    });
+                    myMap.controls
+                    // Кнопка изменения масштаба.
+                        .add('zoomControl', { left: 5, top: 5 })
+
+                    // Обработка события, возникающего при щелчке
+                    // левой кнопкой мыши в любой точке карты.
+                    // При возникновении такого события откроем балун.
+                    myMap.events.add('click', function (e) {
+                      if (!myMap.balloon.isOpen()) {
+                        var coords = e.get('coordPosition');
+                        $('#X').val(coords[0].toPrecision(6) * 100000);
+                        $('#Y').val(coords[1].toPrecision(6) * 100000);
+                        //$('#X').attr("value", coords[0].toPrecision(6));
+                        $('#zoom').val(myMap.getZoom());
+                        // alert('x: ' + coords[0] + '\ny: ' + coords[1]);
+                        /* myMap.balloon.open(coords, {
+                             contentHeader: 'Событие!',
+                             contentBody: '<p>Кто-то щелкнул по карте.</p>' +
+                                 '<p>Координаты щелчка: ' + [
+                                 coords[0].toPrecision(6),
+                                 coords[1].toPrecision(6)
+                                 ].join(', ') + '</p>',
+                             contentFooter: '<sup>Щелкните еще раз</sup>'
+                     });
+                     */
+                      }
+                      else {
+                        myMap.balloon.close();
+                      }
+                    });
+
+                    // Обработка события, возникающего при щелчке
+                    // правой кнопки мыши в любой точке карты.
+                    // При возникновении такого события покажем всплывающую подсказку
+                    // в точке щелчка.
+                    //myMap.events.add('contextmenu', function (e) {
+                    //    myMap.hint.show(e.get('coordPosition'), 'Кто-то щелкнул правой кнопкой');
+                    //});
+                  }
+                </script>
+
+            </td>
+
+        </tr>
+    </table>
+}
+
+

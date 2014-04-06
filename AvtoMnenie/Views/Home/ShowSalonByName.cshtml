@@ -1,0 +1,154 @@
+﻿@using AvtoMnenie.Models
+@{
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (SalonContext _db = new SalonContext())
+{
+  SalonModel salon_to_show = _db.Salons.Find(ViewBag.id);
+  NavigationListModel navlist = new NavigationListModel();
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("главная");
+  navlist.ControllerName.Add("home");
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("автосалоы");
+  navlist.ControllerName.Add("home");
+  navlist.TargetName = salon_to_show.Name;
+  ViewBag.Title = "Автосалон " + salon_to_show.Name;
+  
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>
+  <div class="FullSalonContainer">
+    <div class="FullSalonNameContainer">
+      <span><strong>@salon_to_show.Name</strong></span>
+    </div>
+    <table>
+      <tr>
+        <!--Левая Колонка -->
+        <td width="480" style="vertical-align: top">
+          <div class="FullSalonPreViewText">
+            @Html.Raw(@salon_to_show.About)
+          </div>
+          <div class="FullSalonPropertyContainer" id="SalonAddres">
+            <div class="FullSalonPropName">Адрес</div>
+            <div class="FullSalonPropEntity">@salon_to_show.Addres</div>
+          </div>
+          <div class="FullSalonPropertyContainer" id="SalonPhone">
+            <div class="FullSalonPropName">Телефон</div>
+            <div class="FullSalonPropEntity">@salon_to_show.PhoneNamber </div>
+          </div>
+          <div class="FullSalonPropertyContainer" id="SalonWorkingMode">
+            <div class="FullSalonPropName">Режим Работы</div>
+            <div class="FullSalonPropEntity">@salon_to_show.TimeWorkingMode</div>
+          </div>
+          <div class="FullSalonPropertyContainer" id="SalonAboutText">
+            <div class="FullSalonPropName">О салоне</div>
+            <div class="FullSalonPropEntity">@Html.Raw(salon_to_show.AboutFull)</div>
+          </div>
+          <div class="FullSalonPropertyContainer" id="SalonImages">
+            <div class="FullSalonPropName">Фото салона</div>
+          </div>
+        </td>
+
+        <!--Правая Колонка -->
+        <td width="460" style="vertical-align: top">
+          <div id="map" style="width: 440px; height: 380px"></div>
+          @{
+  string x = _db.MapCoords.Find(salon_to_show.SalonCoordsID).X.ToString().Replace(",", ".");
+  string y = _db.MapCoords.Find(salon_to_show.SalonCoordsID).Y.ToString().Replace(",", ".");
+          }
+          <div class="SalonFeedBackPanel">
+            <span style="margin-left: 35px;"><a href="/Salon/Comments/@salon_to_show.TransName">Отзывы</a></span>
+            <span style="margin-left: 35px;"><a href="/Salon/PostComment/@salon_to_show.TransName">Добавить отзыв</a></span>
+          </div>
+          <div>
+            @{var AllReviews = (from r in _db.Comments where r.IsAllowedToShow orderby r.PostDate descending select r).Take(3);
+              foreach (CommentModel comment_to_show in AllReviews)
+              {
+                if (comment_to_show.Like)
+                {
+              <div class="SalonSmallCommentContainerGood">
+                <span class="SalonSmallCommentName">@_db.Users.Find(comment_to_show.MasterUserID).Name</span>
+                <span style="margin-left: 10px; margin-right: 10px;">- </span>
+                <span class="SalonSmallCommentDate">@comment_to_show.PostDate.Date.ToShortDateString()</span>
+                <div class="SalonSmallCommentText">
+                  <p>@comment_to_show.Text</p>
+                </div>
+              </div>
+                }
+                else
+                {
+              <div class="SalonSmallCommentContainerBad">
+                  <span class="SalonSmallCommentName">@_db.Users.Find(comment_to_show.MasterUserID).Name</span>
+                  <span style="margin-left: 10px; margin-right: 10px;">- </span>
+                  <span class="SalonSmallCommentDate">@comment_to_show.PostDate.Date.ToShortDateString()</span>
+                <div class="SalonSmallCommentText">
+                  <p>@comment_to_show.Text</p>
+                </div>
+              </div>
+                }
+              }
+            }
+          </div>
+          <script type="text/javascript">
+            ymaps.ready(init);
+
+            function init() {
+
+              var myMap = new ymaps.Map('map', {
+                center: [@x,@y],
+                zoom: [@(_db.MapCoords.Find(salon_to_show.SalonCoordsID).zoom)]
+              });
+              myPlacemark = new ymaps.Placemark([@x, @y], {
+                // Чтобы балун и хинт открывались на метке, необходимо задать ей определенные свойства.
+                balloonContentHeader: "@salon_to_show.Name",
+                              balloonContentBody: "@salon_to_show.Addres",
+                              //balloonContentFooter: "<a href=/salon/\"@salon_to_show.TransName\">страyица салона</a>",
+                              hintContent: "@salon_to_show.Name"
+                            });
+                            myMap.geoObjects.add(myPlacemark);
+
+
+              // Для добавления элемента управления на карту
+              // используется поле map.controls.
+              // Это поле содержит ссылку на экземпляр класса map.control.Manager.
+
+              // Добавление элемента в коллекцию производится
+              // с помощью метода add.
+
+              // В метод add можно передать строковый идентификатор
+              // элемента управления и его параметры.
+                            myMap.controls
+                                // Кнопка изменения масштаба.
+                                .add('zoomControl', { left: 5, top: 5 })
+                                // Список типов карты
+                                .add('typeSelector')
+              // Стандартный набор кнопок
+              //.add('mapTools', { left: 35, top: 5 });
+
+              // Также в метод add можно передать экземпляр класса элемента управления.
+              // Например, панель управления пробками.
+                            var trafficControl = new ymaps.control.TrafficControl();
+                            myMap.controls
+                                .add(trafficControl)
+                                // В конструкторе элемента управления можно задавать расширенные
+                                // параметры, например, тип карты в обзорной карте.
+                                .add(new ymaps.control.MiniMap({
+                                  type: 'yandex#publicMap'
+                                }));
+              /*
+                  // Удаление элементов управления производится через метод remove.
+              myMap.controls
+              .remove(trafficControl)
+              .remove('mapTools');
+              */
+                          }
+          </script>
+
+        </td>
+      </tr>
+    </table>
+  </div>
+}

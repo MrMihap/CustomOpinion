@@ -1,0 +1,71 @@
+﻿/*Меню*/
+#nav,#nav li ul{
+  margin:0px;
+  padding:0px;
+  list-style:none;
+}
+#nav > li{
+  float:left;
+  width:180px;
+}
+#nav li ul{
+  display:none;
+  position:absolute;
+  z-index:100;
+  width:120px;
+}
+#nav li:hover ul{display:block}
+#nav > li{
+  background-color:#F5F5F5;
+  text-align:center;
+  padding:10px 0px 10px 0px;
+  border-top:1px solid #E8E8E8;
+  border-right:1px solid #E8E8E8;
+}
+#nav > li:hover{background-color:#E8E8E8;}
+#nav > li > a{
+  font:14px "Geargia";
+  color:#000000;
+  text-decoration:none;
+  text-transform:uppercase;
+}
+#nav li ul{
+  margin-top:10px;
+  background-color:#ffffff;
+  border:1px solid #E8E8E8;
+  width:180px
+}
+#nav li ul li{
+  text-align:center;
+  padding:5px 5px 5px 15px;
+}
+#nav li ul li a{
+  font:14px "Geargia";
+  color:#000000;
+  text-decoration:none;
+}
+#nav li ul li a:hover{
+  font:14px "Geargia";
+  color:#553CCF;
+  text-decoration:none;
+}
+.Menu
+{
+	height: 100px;
+	width: 100%;
+}
+/*Menu End*/
+/*User Managment*/
+.UsersTable
+{
+	border-bottom-color: darkslategrey;
+	border-width: 1px;
+}
+td .UsersTable
+{
+	min-width: 120px;
+}
+.SalonCreationField
+{
+	width: 450px;
+}

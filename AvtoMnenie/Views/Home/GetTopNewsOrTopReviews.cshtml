@@ -1,0 +1,49 @@
+﻿@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+  if (Request.Form["DataType"].Equals("News"))
+  {
+    var newslist = (from u in _db.News orderby u.CreationTime descending select u).Take(3);
+    foreach (NewsModel news in newslist)
+    {
+  <div class="NewsContainer">
+    <div class="NewsHeader">
+      <a href="/News/@news.TransName">@news.Header</a> - <span style="color: grey;">@news.CreationTime.Date.ToShortDateString()</span>
+    </div>
+    <div class="NewsBody">
+      @Html.Raw(news.PreViewText)
+    </div>
+  </div>
+    }
+  }
+  if (Request.Form["DataType"].Equals("Reviews"))
+  {
+    var AllReviews = (from r in _db.Comments where r.IsAllowedToShow orderby r.PostDate descending select r).Take(3);
+    foreach (CommentModel comment_to_show in AllReviews)
+    {
+      if (comment_to_show.Like)
+      {
+  <div class="SalonSmallCommentContainerGood">
+    <span class="SalonSmallCommentName">@_db.Users.Find(comment_to_show.MasterUserID).Name</span>
+    <span style="margin-left: 10px; margin-right: 10px;">- </span>
+    <span class="SalonSmallCommentDate">@comment_to_show.PostDate.Date.ToShortDateString()</span>
+    <div class="SalonSmallCommentText">
+      <p>@comment_to_show.Text</p>
+    </div>
+  </div>
+      }
+      else
+      {
+  <div class="SalonSmallCommentContainerBad">
+    <span class="SalonSmallCommentName">@_db.Users.Find(comment_to_show.MasterUserID).Name</span>
+    <span style="margin-left: 10px; margin-right: 10px;">- </span>
+    <span class="SalonSmallCommentDate">@comment_to_show.PostDate.Date.ToShortDateString()</span>
+    <div class="SalonSmallCommentText">
+      <p>@comment_to_show.Text</p>
+    </div>
+  </div>
+      }
+    }
+  }
+}
+

@@ -1,0 +1,24 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <text>
+    <span style="float:left; width:90px; text-align:left;">Вы вошли как </span> @Html.ActionLink(" " +	 
+            User.Identity.Name,
+            "Manage",
+            "Account",
+            routeValues: null,
+            htmlAttributes: new { @class = "username", title = "Управление" })<span style="float:left"></span>
+
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a>
+        } 
+    </text>
+}
+else
+{
+    <ul>
+        <li><a id="RegButton" href="#">Регистрация</a></li>
+        <li><a id="LoginButton" href="#">Выполнить Вход</a></li>
+    </ul>
+}

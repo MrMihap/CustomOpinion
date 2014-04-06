@@ -1,0 +1,48 @@
+﻿@using AvtoMnenie.Models;
+
+@using (SalonContext _db = new SalonContext())
+{
+  ViewBag.Title = "Модерация отзывов";
+  Layout = null;
+
+  <h2>Все отзывы(сортировка по времени)</h2>
+  var AllReviews = (from com in _db.Comments orderby com.PostDate descending select com);
+  <table border="0">
+    <tr>
+      <td>id</td>
+      <td>дата</td>
+      <td>салон</td>
+      <td>имя пользователя</td>
+      <td>заголовок</td>
+      <td style="max-width: 600px">содержание</td>
+      <td>действия</td>
+    </tr>
+    @foreach (CommentModel comment in AllReviews)
+    {
+      <tr>
+        <td>@comment.ID</td>
+        <td>@comment.PostDate.ToString()</td>
+        <td>@_db.Salons.Find(comment.SalonID).Name</td>
+        <td>@((from u in _db.Users where u.Id == comment.MasterUserID select u).First().Name)</td>
+        <td>@comment.Header</td>
+        <td>@comment.Text</td>
+        <td>
+          @Html.Partial("~/Views/AdminCommon/CommentAllowDisAllow.cshtml", comment)
+        </td>
+      </tr>
+    }
+  </table>
+}
+<script type="text/javascript">
+
+  var rows = document.getElementsByTagName('tr');
+  for (var i = 0; i < rows.length; i++) {
+
+    if (i % 2 == 0) {
+      //rows.item(i).style.backgroundColor = "#28B7FB"
+    }
+    else {
+      rows.item(i).style.backgroundColor = "#bbbbbb";
+    }
+  }
+</script>

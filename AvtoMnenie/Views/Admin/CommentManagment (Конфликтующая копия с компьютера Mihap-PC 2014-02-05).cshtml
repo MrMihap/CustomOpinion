@@ -1,0 +1,33 @@
+﻿@{
+  ViewBag.Title = "Модерация комментариев";
+  Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+<h2>Модерация комментариев</h2>
+@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+
+  using (Ajax.BeginForm(
+  "ComentModeration",
+  new AjaxOptions
+  {
+    HttpMethod = "Post",
+    UpdateTargetId = "ModerationField",
+    InsertionMode = InsertionMode.Replace
+  }))
+  {
+  <input type="hidden" name="ModerationType" value="New" id="ModerationType" />
+  <input type="hidden" name="PageNum" value="0" id="PageNum" />
+  <input type="submit" id="LoadModerationPage" style="display:none" />
+  <a href="#" onclick="$('#ModerationType').val('BySalons'); $('#LoadModerationPage').click();">По салонам </a>
+  <a href="#" onclick="$('#ModerationType').val('ByTime'); $('#LoadModerationPage').click();">По времени </a>
+  <a href="#" onclick="$('#ModerationType').val('New'); $('#LoadModerationPage').click();">Непросмотренные </a>
+  }
+
+}
+<div class="ModerationField" id="ModerationField">
+</div>
+<script type="text/javascript">
+  $('#ModerationType').val('New');
+  $('#LoadModerationPage').click();
+</script>

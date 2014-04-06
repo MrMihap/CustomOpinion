@@ -1,0 +1,138 @@
+﻿@using AvtoMnenie.Models
+
+@using (SalonContext _db = new SalonContext())
+{
+  Layout = null;
+  int TargetID = 0;
+  int.TryParse(Request.Form["SalonID"], out TargetID);
+  int Count = 0;
+  List<CommentModel> LeftList = new List<CommentModel>();
+  List<CommentModel> RightList = new List<CommentModel>();
+  string CurrentUserName = HttpContext.Current.User.Identity.Name.ToString();
+  int CurrentUserID = 0;
+  User CurrentUser = (from u in _db.Users where u.Email.Equals(CurrentUserName) select u).FirstOrDefault();
+  if (CurrentUser != null)
+  {
+    CurrentUserID = CurrentUser.Id;
+  }
+  if (Request.Form["DataType"].Equals("All"))
+  {
+
+    var AllReviews = (from r in _db.Comments
+                      where r.SalonID == TargetID && (r.IsAllowedToShow || CurrentUserID == r.MasterUserID)
+                      orderby r.PostDate descending
+                      select r);
+    foreach (CommentModel comment_to_show in AllReviews)
+    {
+      if (Count % 2 == 0)
+      {
+        LeftList.Add(comment_to_show);
+      }
+      else
+      {
+        RightList.Add(comment_to_show);
+      }
+      Count++;
+    }
+  }
+  if (Request.Form["DataType"].Equals("Best"))
+  {
+    var AllReviews = (from r in _db.Comments
+                      where r.SalonID == TargetID && r.Like && (r.IsAllowedToShow || CurrentUserID == r.MasterUserID)
+                      orderby r.PostDate descending select r);
+    foreach (CommentModel comment_to_show in AllReviews)
+    {
+      if (Count % 2 == 0)
+      {
+        LeftList.Add(comment_to_show);
+      }
+      else
+      {
+        RightList.Add(comment_to_show);
+      }
+      Count++;
+    }
+  }
+  if (Request.Form["DataType"].Equals("Badly"))
+  {
+    var AllReviews = (from r in _db.Comments
+                      where r.SalonID == TargetID && !r.Like && (r.IsAllowedToShow || CurrentUserID == r.MasterUserID)
+                      orderby r.PostDate descending select r);
+    foreach (CommentModel comment_to_show in AllReviews)
+    {
+      if (Count % 2 == 0)
+      {
+        LeftList.Add(comment_to_show);
+      }
+      else
+      {
+        RightList.Add(comment_to_show);
+      }
+      Count++;
+    }
+  }
+  if (LeftList.Count + RightList.Count() > 0 && TargetID != 0)
+  {
+    
+  <table>
+    <tr>
+      <!--Левая Колонка -->
+      <td width="480" style="vertical-align: top">
+        @for (int i = 0; i < LeftList.Count; i++)
+        {
+          if (LeftList[i].Like)
+          {
+          <div class="SalonSmallCommentContainerGood">
+            <span class="SalonSmallCommentHeader">@LeftList[i].Header</span>
+            <div class="SalonSmallCommentText">
+              <p>@LeftList[i].Text</p>
+            </div>
+            <span class="SalonSmallCommentName">@_db.Users.Find(LeftList[i].MasterUserID).Name</span>
+            <span style="margin-left: 10px; margin-right: 10px;">- </span>
+            <span class="SalonSmallCommentDate">@LeftList[i].PostDate.Date.ToShortDateString()</span>
+
+          </div>
+          }
+          else
+          {
+          <div class="SalonSmallCommentContainerBad">
+            <span class="SalonSmallCommentHeader">@LeftList[i].Header</span>
+            <div class="SalonSmallCommentText">
+              <p>@LeftList[i].Text</p>
+            </div>
+            <span class="SalonSmallCommentName">@_db.Users.Find(LeftList[i].MasterUserID).Name</span>
+            <span style="margin-left: 10px; margin-right: 10px;">- </span>
+            <span class="SalonSmallCommentDate">@LeftList[i].PostDate.Date.ToShortDateString()</span>
+
+          </div>
+          }
+
+        }
+      </td>
+      <!--Правая Колонка -->
+      <td width="460" style="vertical-align: top">
+        @for (int i = 0; i < RightList.Count; i++)
+        {
+          <div class="SalonSmallCommentContainerGood">
+            <span class="SalonSmallCommentHeader">@RightList[i].Header</span>
+            <div class="SalonSmallCommentText">
+              <p>@RightList[i].Text</p>
+            </div>
+            <span class="SalonSmallCommentName">@_db.Users.Find(RightList[i].MasterUserID).Name</span>
+            <span style="margin-left: 10px; margin-right: 10px;">- </span>
+            <span class="SalonSmallCommentDate">@RightList[i].PostDate.Date.ToShortDateString()</span>
+          </div>  
+        }
+      </td>
+    </tr>
+  </table>
+
+
+  <div class="RightCommentsList">
+  </div>    
+  }
+  else
+  {
+  <p>Для этого автосалона еще нет таких комментариев.</p>
+  }
+}

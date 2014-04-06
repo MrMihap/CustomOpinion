@@ -1,0 +1,67 @@
+﻿@using AvtoMnenie.Models
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>@ViewBag.Title</title>
+  <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+  @Styles.Render("~/Content/AdminCenter.css")
+  @Scripts.Render("~/Scripts/jquery-1.8.2.js")  
+  @Scripts.Render("~/bundles/modernizr")
+  @Scripts.Render("~/Scripts/Translit.js")
+  @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+  <script src="~/Scripts/jquery.validate.min.js"></script>
+  <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+  @*@Scripts.Render("~/Scripts/tinymce.min.js")*@
+  <script>
+    tinymce.init({ selector: 'textarea' });
+  </script>
+</head>
+<body>
+  <div class="Menu">
+    <nav>
+      @using (SalonContext _db = new SalonContext())
+      {
+        <ul id="nav">
+
+          <li><a href="#">Пользователи</a>
+            <ul>
+              <li>@Html.ActionLink("управление", "UserManagment")</li>
+              <li>@Html.ActionLink("сообщения", "FeedBacks")
+                @if (_db.FeedBacks.Count(f => f.IsReaded == false) > 0)
+                {
+                  <span>, новых: @_db.FeedBacks.Count(f => f.IsReaded == false)</span>
+                }
+              </li>
+            </ul>
+          </li>
+          <li><a href="#" onclick="return false;">Салоны</a>
+            <ul>
+              <li>@Html.ActionLink("Создать", "CreateSalon")</li>
+              <li>@Html.ActionLink("Управление", "SalonManagment")</li>
+              <li>@Html.ActionLink("Области", "AreasManagment")</li>
+            </ul>
+          </li>
+          <li><a href="#" onclick="return false;">Комментарии</a>
+            <ul>
+              <li>@Html.ActionLink("Модерация", "CommentManagment")</li>
+            </ul>
+          </li>
+          <li><a href="#" onclick="return false;">Новости</a>
+            <ul>
+              <li>@Html.ActionLink("Создать", "CreateNews")</li>
+              <li>@Html.ActionLink("Управление", "NewsManagment")</li>
+              <li><a href="#">управление загруженными изображениями</a></li>
+            </ul>
+          </li>
+          <li>@Html.ActionLink("Выход", "Index", "Home")</li>
+        </ul>
+      }
+    </nav>
+  </div>
+  <div>
+    @RenderBody()
+  </div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <title>@ViewBag.Title</title>
+  <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width" />
+  @Styles.Render("~/Content/main.css")
+  @Styles.Render("~/Content/news.css")
+  @Styles.Render("~/Content/salon.css")
+  @Scripts.Render("~/Scripts/jquery-1.8.2.js")
+  @Scripts.Render("~/bundles/modernizr")
+  @Scripts.Render("~/Scripts/LoginRegister.js")
+  @Scripts.Render("~/Scripts/_jquery.loginPopup.js")
+  @Scripts.Render("//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU")
+  @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#LoginButton').loginPopup($('#LoginHiddenBlock'));
+      $('#RegButton').RegPopup($('#RegisterHiddenBlock'));
+    });
+  </script>
+</head>
+<body>
+  <!-- Центрирующий контейней сайта -->
+  <div class="mainsite">
+    <header>
+      <!-- Топовая часть -->
+      <div class="topheader">
+        <div class="accountplace">
+          <section id="login">
+            @Html.Partial("LoginPartial", null)
+          </section>
+        </div>
+        <div class="RegisterHiddenBlock" id="RegisterHiddenBlock">
+          @Html.Partial("~/Views/Account/Register.cshtml", null)
+
+        </div>
+        <div class="LoginHiddenBlock" id="LoginHiddenBlock">
+          @Html.Partial("~/Views/Account/login.cshtml", null)
+        </div>
+        <a href="/">
+          <div class="emblemcont"></div>
+        </a>
+      </div>
+      <div class="SubTopCont">
+        <nav>
+          <!-- Строка меню -->
+
+          <div class="TopMenu">
+            <a href="/Home/About/">
+              <div class="MenuElem" id="About">
+                <div class="SubMenuElem">О проекте </div>
+              </div>
+              <div class="MenuSeparator_1"></div>
+              <div class="MenuSeparator_2"></div>
+            </a>
+            <a href="/Home/Index">
+              <div class="MenuElem" id="Catalog">
+                <div class="SubMenuElem">Каталог автосалонов</div>
+              </div>
+            </a>
+            <div class="MenuSeparator_1"></div>
+            <div class="MenuSeparator_2"></div>
+            <a>
+              <div class="MenuElem" id="Comments">
+                <div class="SubMenuElem">Отзывы </div>
+              </div>
+            </a>
+            <div class="MenuSeparator_1"></div>
+            <div class="MenuSeparator_2"></div>
+            <a href="/home/news">
+              <div class="MenuElem" id="News">
+                <div class="SubMenuElem">Новости</div>
+              </div>
+            </a>
+            <div class="MenuSeparator_1"></div>
+            <div class="MenuSeparator_2"></div>
+            <a href="/Home/ContactUs">
+              <div class="MenuElem" id="Feedbacks">
+                <div class="SubMenuElem">Обратная связь</div>
+              </div>
+            </a>
+          </div>
+        </nav>
+        <!-- Поиск салонов -->
+        <div class="SearchBox">
+          @{using (Ajax.BeginForm(
+              "GetSalonsByName",
+              new AjaxOptions
+              {
+                HttpMethod = "Post",
+                UpdateTargetId = "TopSalonsContainer",
+                InsertionMode = InsertionMode.Replace,
+                OnBegin = "SalonListLoad();"
+              }))
+              {
+            <input type="search" id="SearchInput" name="Name" placeholder="Искать организацию..." />
+            <input type="submit" id="SearchButton" value="Найти" />
+            }
+          }
+        </div>
+        <!-- Навигационная панель -->
+      </div>
+    </header>
+    <div id="body">
+      @RenderSection("featured", required: false)
+      <section class="content-wrapper main-content clear-fix">
+        @RenderBody()
+      </section>
+    </div>
+    <footer>
+      <!-- А здесь фууутер. -->
+      <div class="FooterContainer">
+        <span class="FooterText">@DateTime.Now.Year (c) "Автомнение" Автосалоны и автоцентры в Москве и Московской области</span>
+        <div class="FooterSocialContainer">
+          <div class="FooterSocialElement">
+            <a href="http://www.vk.com">
+              <img src="/Content/img/vk.jpg" /></a>
+          </div>
+          <div class="FooterSocialElement">
+            <a href="http://www.vk.com">
+              <img src="/Content/img/fb.jpg" /></a>
+          </div>
+          <div class="FooterSocialElement">
+            <a href="http://www.vk.com">
+              <img src="/Content/img/tw.jpg" /></a>
+          </div>
+          <div class="FooterSocialElement">
+            <a href="http://www.vk.com">
+              <img src="/Content/img/oc.jpg" /></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>

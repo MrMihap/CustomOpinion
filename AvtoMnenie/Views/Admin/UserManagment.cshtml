@@ -1,0 +1,80 @@
+﻿@{
+  ViewBag.Title = "UserManagment";
+  Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+@model IEnumerable<AvtoMnenie.Models.User>
+@using AvtoMnenie.Models
+@using (SalonContext _db = new SalonContext())
+{
+  <table class="UsersTable" border="1">
+    <tr>
+      <td>id</td>
+      <td>Почта</td>
+      <td>Имя</td>
+      <td>Дата создания</td>
+      <td></td>
+      <td>Уровень Прав</td>
+      <td>Управление</td>
+      <td></td>
+    </tr>
+    @{
+  var UsersList = (from u in _db.Users select u);
+    }
+    @foreach (User UserContext in UsersList)
+    {
+
+      var UserRoles = (from rim in _db.UsersInRoles
+                       join role in _db.Roles on rim.RoleID equals role.Id
+                       where rim.UserID == UserContext.Id
+                       select role);
+      var AllRoles = (from role in _db.Roles select role);
+      List<string> UserRolesStrings = new List<string>();
+      List<string> AllRolesStrings = new List<string>();
+
+      foreach (Role role in UserRoles)
+      {
+        UserRolesStrings.Add(role.Name);
+      }
+      foreach (Role role in AllRoles)
+      {
+        AllRolesStrings.Add(role.Name);
+      }
+      <tr>
+        <td>@UserContext.Id</td>
+        <td>@UserContext.Email</td>
+        <td>@UserContext.Name</td>
+        <td>@UserContext.CreationDate</td>
+        <td>
+          @Html.Partial("~/Views/Admin/_UserRolesEditPartial.cshtml", UserContext)
+        </td>
+        <td>@_db.Roles.Find(UserContext.RoleId).Name</td>
+        <td>@if (UserContext.IsBanned)
+            {
+          <span> забанен </span>
+          @Html.ActionLink("снять бан", "SetUserUnBanned/" + UserContext.Id.ToString())
+            }
+            else
+            { 
+          <span> открыт </span>
+          @Html.ActionLink("забанить", "SetUserUnBanned/" + UserContext.Id.ToString())
+            }
+        </td>
+        <td><a href="#" onclick="alert('Обратитесь к разрабочику или \n администратору базы данных'); return false">получить пароль</a></td>
+
+      </tr>
+    }
+  </table>
+  <script type="text/javascript">
+
+    var rows = document.getElementsByTagName('tr');
+    for (var i = 0; i < rows.length; i++) {
+
+      if (i % 2 == 0) {
+        //rows.item(i).style.backgroundColor = "#28B7FB"
+      } else {
+        rows.item(i).style.backgroundColor = "grey";
+      }
+    }
+
+  </script>
+}

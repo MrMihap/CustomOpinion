@@ -1,0 +1,78 @@
+﻿@model AvtoMnenie.Models.ContactUS
+@using AvtoMnenie.Models;
+@{
+  ViewBag.Title = "Обратная свзяь";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+
+  NavigationListModel navlist = new NavigationListModel();
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("главная");
+  navlist.ControllerName.Add("home");
+  navlist.TargetName = "связаться с нами";
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>  
+  <div class="NavigationCont" style="font-family: Arial">Обратная связь</div>
+}
+<div class="MainContent" id="MainContent">
+  @{using (Ajax.BeginForm(
+  "ContactUs",
+  new AjaxOptions
+  {
+    HttpMethod = "Post",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "MainContent"
+  }))
+    {
+    @Html.ValidationSummary(true)
+    <div class="editor-label">
+      <label for="Email">Ваша почта</label>
+    </div>
+    <div class="editor-field">
+      <input class="text-box single-line" 
+        data-val="true"
+         data-val-required="Требуется поле Email." 
+        id="Email" name="Email" type="email"
+        style="border: none; width:240px; margin-top: 10px; font-family: Arial; -webkit-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); -moz-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); box-shadow: 0px 10px 20px rgba(207, 207, 207, .3);" 
+            value="@User.Identity.Name" />
+      <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+    </div>
+ 
+      using (SalonContext _db = new SalonContext())
+      {
+        User user = (from u in _db.Users where u.Email.Equals(User.Identity.Name) select u).FirstOrDefault();
+        
+    <div class="editor-label">
+      <label for="Name">Ваше имя</label>
+    </div>
+    <div class="editor-field">
+      <input class="text-box single-line"
+        data-val="true" 
+        style="border: none; width:240px; margin-top: 10px; font-family: Arial; -webkit-box-shadow: 0px 10px 20px rgba(247, 247, 247, .5); -moz-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); box-shadow: 0px 10px 20px rgba(207, 207, 207, .3);"
+        data-val-length="Too long header" 
+        data-val-length-max="100" 
+        data-val-required="вы не ввели имя" 
+        id="Name" 
+        name="Name" 
+                type="text" value="@if (user != null)
+                                   {<text>@user.Name;</text>}" />
+      <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+    </div>
+      }
+    <div class="editor-label">
+      <label for="Text">Ваше сообщение</label>
+    </div>
+    <div class="editor-field">
+      <textarea cols="50" data-val="true" data-val-length="Too long Comment text" data-val-length-max="3000" data-val-required="необходимо написать сообщение" id="Text" name="Text" rows="2"
+        style="border: none; margin-top: 20px; font-family: Arial; -webkit-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); -moz-box-shadow: 0px 10px 20px rgba(247, 247, 247, .2); box-shadow: 0px 10px 20px rgba(207, 207, 207, .3);">
+</textarea>
+      <span class="field-validation-valid" data-valmsg-for="Text" data-valmsg-replace="true"></span>
+    </div>
+
+    <p>
+      <input type="submit" value="Отправить" />
+    </p>
+    }
+  }
+</div>

@@ -1,0 +1,132 @@
+﻿@*<!-- Список автосалонов -->*@
+@model AvtoMnenie.Models.SalosAreasModel
+@using AvtoMnenie.Models
+
+@using (SalonContext _db = new SalonContext())
+{
+    if ((from s in _db.Salons where s.SalonAreaID == Model.ID orderby s.ID descending select s).Count() > 0)
+    {
+
+        //[TODO] получать по разным способам..
+
+        var top5salons = (from s in _db.Salons where s.SalonAreaID == Model.ID orderby s.ID descending select s).Take(5); ;
+        if (Request.Form["FeedBackFilter"].Equals("ByDefault"))
+        {
+            top5salons = (from s in _db.Salons where s.SalonAreaID == Model.ID orderby s.ID descending select s).Take(5);
+        }
+        if (Request.Form["FeedBackFilter"].Equals("WithFB"))
+        {
+            top5salons = (from s in _db.Salons
+                          where s.SalonAreaID == Model.ID &&
+                          (from comment in _db.Comments where comment.SalonID == s.ID select comment).Count() > 0
+                          orderby s.ID descending
+                          select s).Take(5);
+
+        }
+        // To calc Average Coord
+        double MinX = 99999999, MinY = 9999999;
+        double MaxX = 0, MaxY = 0;
+        double t;
+        if (top5salons.Count() != 0)
+        {
+            foreach (SalonModel salon in top5salons)
+            {
+                t = _db.MapCoords.Find(salon.SalonCoordsID).X;
+                if (t < MinX) { MinX = t; }
+                if (t > MaxX) { MaxX = t; }
+                t = _db.MapCoords.Find(salon.SalonCoordsID).Y;
+                if (t < MinY) { MinY = t; }
+                if (t > MaxY) { MaxY = t; }
+    <div class="SalonPreViewContainer">
+        <div class="SalonPreViewHeader">
+            <div class="HiddenSalonInfo" id="@salon.ID" style =""></div>
+            <table border="0">
+                <tr>
+                    <td>
+                        <a href="@("salon/" + @salon.TransName)" >@salon.Name</a>
+                    </td>
+                    <td width="78">
+                        <div class="SalonFeedBackCountLeftBourder"></div>
+                        <div class="SalonFeedBackCount">@_db.Comments.Count(c => c.SalonID == salon.ID)</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="SalonAboutContainer">
+            <p>@Html.Raw(salon.About)</p>
+            <p>
+                <b>Адрес:</b> @salon.Addres
+                <br />
+                <b>Телефон:</b> @salon.PhoneNamber
+            </p>
+
+        </div>
+    </div>
+            }
+            string AverageX = (MinX / 2 + MaxX / 2).ToString().Replace(",", ".");
+            string AverageY = (MinY / 2 + MaxY / 2).ToString().Replace(",", ".");
+    <script type="text/javascript">
+        //эта функция должна удалять старый объект яндекс карт и создавать новый.
+
+        //
+        // Дождёмся загрузки API и готовности DOM.
+        ymaps.ready(initWithCoord);
+        function initWithCoord() {
+            // Создание экземпляра карты и его привязка к контейнеру с
+            // заданным id ("map").
+            myMap = new ymaps.Map('MapContainer', {
+                // При инициализации карты обязательно нужно указать
+                // её центр и коэффициент масштабирования.
+                center: [@AverageX, @AverageY], // Москва
+                zoom: 10
+            });
+            myMap.controls
+              // Кнопка изменения масштаба.
+              .add('zoomControl', { left: 5, top: 5 })
+              // Список типов карты
+              .add('typeSelector')
+      @foreach (SalonModel salon in top5salons)
+      {
+          string x = _db.MapCoords.Find(salon.SalonCoordsID).X.ToString().Replace(",", ".");
+          string y = _db.MapCoords.Find(salon.SalonCoordsID).Y.ToString().Replace(",", ".");
+       <text>
+
+            myPlacemark = new ymaps.Placemark([@x, @y], {
+
+                // Чтобы балун и хинт открывались на метке, необходимо задать ей определенные свойства.
+                balloonContentHeader: "@salon.Name",
+            balloonContentBody: "@salon.Addres",
+            //balloonContentFooter: "<a href=/salon/\"@salon.TransName\">страyица салона</a>",
+            hintContent: "@salon.Name"
+        });
+
+        myMap.geoObjects.add(myPlacemark);
+      </text>
+      }
+
+        }
+    </script>
+
+        }
+        else
+        {
+    <p>Нет организаций, удовлетворяющих критериям поиска.</p>    
+    <script type="text/javascript">
+
+        // Дождёмся загрузки API и готовности DOM.
+        ymaps.ready(init);
+        function init() {
+            // Создание экземпляра карты и его привязка к контейнеру с
+            // заданным id ("map").
+            myMap = new ymaps.Map('MapContainer', {
+                // При инициализации карты обязательно нужно указать
+                // её центр и коэффициент масштабирования.
+                center: [55.76, 37.64], // Москва
+                zoom: 10
+            });
+        }
+    </script>
+        }
+    }
+}

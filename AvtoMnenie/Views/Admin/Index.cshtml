@@ -1,0 +1,26 @@
+﻿@using AvtoMnenie.Models
+@{
+    ViewBag.Title = "Панель управления сайтом";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}		
+<h1>@ViewBag.PageName</h1>
+@using (SalonContext _db = new SalonContext())
+{
+	<text>
+<p>Здесь будет текст справки, привествия и всего осталоного что может понадобиться пользователям</p>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<p>Необходимо доделать до v1.2.1 - final relise</p>
+<ul style="font-family:Arial; color:red;">
+  <li><s>Добавить Ajax загрузку фото для салонов</s></li>
+  <li><s>Включить страницу модерации отзывов</s></li>
+  <li>Уведомление о регистрации</li>
+  <li><s>История комментариев и ответов к ним - Сделать</s></li>
+</ul>
+	</text>	
+}

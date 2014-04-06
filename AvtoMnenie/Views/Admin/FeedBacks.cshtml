@@ -1,0 +1,44 @@
+﻿@using AvtoMnenie.Models
+@{
+    ViewBag.Title = "FeedBacks";
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+<table>
+    <tr>
+        <td>id</td>
+        <td>Дата</td>
+        <td>Автор</td>
+        <td>Почта</td>
+        <td>Сообщение</td>
+        <td>Прочитано</td>
+    </tr>
+    @{
+        using (SalonContext _db = new SalonContext())
+        {
+            var AllFeedBacks = (from f in _db.FeedBacks orderby f.PostDate descending select f);
+            foreach (ContactUS feedback in AllFeedBacks)
+            {
+        <tr>
+            <td>@feedback.ID</td>
+            <td>@feedback.PostDate</td>
+            <td>@feedback.Name</td>
+            <td>@feedback.Email</td>
+            <td>@feedback.Text</td>
+            <td>
+                @if (feedback.IsReaded)
+                {
+                    <span>прочитано</span>
+                    @Html.ActionLink("отметить непрочитанным", "SetFeedBackAsUnReaded/" + feedback.ID.ToString())
+                }
+                else
+                {
+                    <span>новое</span>
+                    @Html.ActionLink("отметить прочитанным", "SetFeedBackAsReaded/" + feedback.ID.ToString())
+                }
+                
+            </td>
+        </tr>
+            }
+        }
+    }
+</table>

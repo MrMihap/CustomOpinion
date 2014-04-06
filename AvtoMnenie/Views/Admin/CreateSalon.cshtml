@@ -1,0 +1,77 @@
+﻿@model AvtoMnenie.Models.SalonModel
+@{
+    Layout = "~/Views/Admin/_LayoutAdminPage.cshtml";
+}
+@using AvtoMnenie.Models
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@using (Html.BeginForm())
+{
+    using (SalonContext _db = new SalonContext())
+    {
+        List<SalosAreasModel> areas_list = new List<SalosAreasModel>();
+        areas_list = _db.Areas.ToList();
+
+        var areas_items = new SelectList(areas_list, "ID", "Name");
+    @Html.ValidationSummary(true)
+    <fieldset class="SalonCreationField">
+        <legend>SalonModel</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.About)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.About)
+            @Html.ValidationMessageFor(model => model.About)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.AboutFull)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.AboutFull)
+            @Html.ValidationMessageFor(model => model.AboutFull)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeWorkingMode)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeWorkingMode)
+            @Html.ValidationMessageFor(model => model.TimeWorkingMode)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Addres)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Addres)
+            @Html.ValidationMessageFor(model => model.Addres)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PhoneNamber)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PhoneNamber)
+            @Html.ValidationMessageFor(model => model.PhoneNamber)
+        </div>
+        <div>
+            @Html.LabelFor(model => model.SalonAreaID)
+            @Html.DropDownListFor(model => model.SalonAreaID, areas_items)
+        </div>
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+    }
+}
+
