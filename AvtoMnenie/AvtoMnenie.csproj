@@ -232,6 +232,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\reg.ru.pubxml" />
+    <None Include="Properties\PublishProfiles\smartASP.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.7.2.min.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
@@ -301,6 +302,8 @@
     <Content Include="Views\AdminCommon\CommentAllowDisAllow.cshtml" />
     <Content Include="Views\Admin\ComModByTime.cshtml" />
     <Content Include="Views\Home\ContactUsResult.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Account\_EditAcc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

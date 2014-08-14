@@ -75,5 +75,9 @@ namespace AvtoMnenie.Controllers
       }
       return PartialView(model);
     }
+    public ActionResult Manage()
+    {
+      return View();
+    }
   }
 }

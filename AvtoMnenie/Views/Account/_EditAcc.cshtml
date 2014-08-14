@@ -1,0 +1,28 @@
+﻿@model AvtoMnenie.Models.User
+
+
+@using (Html.BeginForm())
+{
+  @Html.ValidationSummary(true)
+
+  <p>Ваше имя: @Model.Name</p>
+  <p>Ваш e-mail: @Model.Email</p>
+  <p>Дата регистрации: @Model.CreationDate.Date</p>  
+  
+  if (Model.IsEnabled)
+  {
+  <p>Ваш аккаунт включен</p>
+  }
+  else
+  { 
+  <p>Ваш аккаунт выключен</p>
+  }
+  
+  if (Model.IsBanned)
+  {
+  <p>Ваш аккаунт забанен</p>
+  }
+  <p>
+    <input type="submit" value="Сохранить" />
+  </p>
+}

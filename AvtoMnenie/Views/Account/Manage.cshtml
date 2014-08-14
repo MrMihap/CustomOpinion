@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Ваш аккаунт";
+}
+@using AvtoMnenie.Providers;
+<!-- Тело страницы -->
+@using AvtoMnenie.Models
+
+@using (SalonContext _db = new SalonContext())
+{
+  User user = (from u in _db.Users where u.Email.Equals( User.Identity.Name) select u).FirstOrDefault(); 
+  NavigationListModel navlist = new NavigationListModel();
+  navlist.ActionName.Add("index");
+  navlist.LinkText.Add("главная");
+  navlist.ControllerName.Add("home");
+  navlist.TargetName = "управление аккаунтом";
+  
+  <div class="NewsNavigationContainer">
+    @Html.Partial("~/Views/Shared/_NavigationList.cshtml", navlist)
+    <div style="clear: both;"></div>
+  </div>  
+  <div class="NavigationCont" style="font-family: Arial">Аккаунт</div>
+  <div class="MainContent">
+
+    @Html.Partial("~/Views/Account/_EditAcc.cshtml", user)
+    
+    @if((from uir in _db.UsersInRoles where uir.UserID == user.Id select uir).Count() > 1)
+    {// Здесь подразумевается, что если ролей больше одной - пользователю разрешен доступ к админ странице
+     @Html.ActionLink("административная панель","Index", "Admin")
+    }
+  </div>
+}  
