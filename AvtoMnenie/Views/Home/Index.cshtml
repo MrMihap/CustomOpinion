@@ -136,4 +136,14 @@
     $('#NewsOrReviewsSubmit').click();
     //document.getElementById('RegionFilterButton').onclick = function () {  myMap.destroy; }
   </script>
+  if (ViewBag.DoRedirect)
+  {
+    <script type="text/javascript">
+//      document.getElementById('SearchInput').Va
+      $('#SearchInput').val('@ViewBag.SRequest');
+      $('#SearchButton').click();
+      document.location.href = '@Html.ActionLink("Все книги", "Index", "Book", new {  author="Толстой",id = 10 }, new { id="Tolstoi", @class="link"})';
+
+    </script>
+  }
 }

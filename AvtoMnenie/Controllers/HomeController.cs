@@ -12,27 +12,41 @@ namespace AvtoMnenie.Controllers
   public class HomeController : Controller
   {
     [AllowAnonymous]
-    public ActionResult Index()
+    public ActionResult Index(bool DoRedirect = false, string SRequest = "")
     {
       ViewBag.PageName = "Каталог Автосалонов";
+      if (DoRedirect)
+      {
+        ViewBag.DoRedirect = true;
+        ViewBag.SRequest = SRequest;
+      }
+      else
+      {
+        ViewBag.DoRedirect = false;
+        ViewBag.SRequest = "";
+      }
       return View();
     }
+
     public ActionResult About()
     {
       ViewBag.PageName = "О проекте";
 
       return View();
     }
+
     public ActionResult News()
     {
       ViewBag.PageName = "Новости";
 
       return View();
     }
+
     public ActionResult SalonComments(string name)
     {
       return View();
     }
+
     [HttpPost]
     public ActionResult GetTopNewsOrTopReviews()
     {
@@ -56,6 +70,7 @@ namespace AvtoMnenie.Controllers
     {
       return PartialView("~/Views/Home/GetSalonsByName.cshtml");
     }
+
     public ActionResult Salon(string name)
     {
       int SalonID = 0;
@@ -66,12 +81,14 @@ namespace AvtoMnenie.Controllers
       if (SalonID == 0) return RedirectToAction("index");
       return RedirectToAction("ShowSalon", new { id = SalonID });
     }
+
     public ActionResult ShowSalon(int id)
     {
       ViewBag.PageName = "Автосалон";
       SalonContext _db = new SalonContext();
       return View();
     }
+
     public ActionResult ShowSalonByName(string name)
     {
       ViewBag.PageName = "Автосалон";
@@ -87,6 +104,7 @@ namespace AvtoMnenie.Controllers
         return RedirectToAction("Index");
       }
     }
+
     public ActionResult ShowSalonComments(string name)
     {
       using (SalonContext _db = new SalonContext())
@@ -96,6 +114,7 @@ namespace AvtoMnenie.Controllers
       return View();
 
     }
+
     [HttpGet]
     public ActionResult PostComment(string name)
     {
@@ -105,10 +124,11 @@ namespace AvtoMnenie.Controllers
       }
       return View();
     }
+
     [HttpPost]
     public ActionResult PostAnswer()
     {
-      using(SalonContext _db = new SalonContext())
+      using (SalonContext _db = new SalonContext())
       {
         try
         {
@@ -137,6 +157,7 @@ namespace AvtoMnenie.Controllers
     {
       throw new NotImplementedException();
     }
+
     [HttpPost]
     public ActionResult SaveComment(string name)
     {
@@ -167,11 +188,13 @@ namespace AvtoMnenie.Controllers
       }
       return Redirect(Request.UrlReferrer.ToString());
     }
+
     [HttpPost]
     public ActionResult GetReviews()
     {
       return View();
     }
+
     public ActionResult ShowNews(int id)
     {
       using (SalonContext _db = new SalonContext())
@@ -181,6 +204,7 @@ namespace AvtoMnenie.Controllers
       }
       return View();
     }
+
     public ActionResult ShowNewsByName(string name)
     {
       int NewsID = 1;
@@ -192,6 +216,7 @@ namespace AvtoMnenie.Controllers
       return View("~/Views/Home/ShowNews.cshtml");
       return RedirectToAction("ShowNews", new { id = NewsID });
     }
+
     [AllowAnonymous]
     public ActionResult ContactUs()
     {
@@ -199,6 +224,7 @@ namespace AvtoMnenie.Controllers
 
       return View();
     }
+
     [HttpPost]
     public ActionResult ContactUs(ContactUS model)
     {
@@ -228,6 +254,7 @@ namespace AvtoMnenie.Controllers
         return PartialView("~/Views/Home/ContactUsResult.cshtml", model);
       }
     }
+
     // return image by id
     public FileContentResult GetImage(int id)
     {
