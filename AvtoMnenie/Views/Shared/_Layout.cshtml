@@ -86,19 +86,29 @@
         </nav>
         <!-- Поиск салонов -->
         <div class="SearchBox">
-          @{using (Ajax.BeginForm(
+          @if(ViewBag.PageName.Equals("Каталог Автосалонов"))
+          {
+          using (Ajax.BeginForm(
               "GetSalonsByName",
               new AjaxOptions
               {
                 HttpMethod = "Post",
                 UpdateTargetId = "TopSalonsContainer",
                 InsertionMode = InsertionMode.Replace,
-                OnBegin = "SalonListLoad();"
+                OnBegin = "SalonListLoad();"                
               }))
               {
             <input type="search" id="SearchInput" name="Name" placeholder="Искать организацию..." />
             <input type="submit" id="SearchButton" value="Найти" />
             }
+          }
+          else
+          {
+            using (Html.BeginForm("index", "Home", FormMethod.Get))
+              {
+            <input type="search" id="SearchInput" name="Name" placeholder="Искать организацию..." />
+            <input type="submit" id="SearchButton" value="Найти" />
+              }
           }
         </div>
         <!-- Навигационная панель -->

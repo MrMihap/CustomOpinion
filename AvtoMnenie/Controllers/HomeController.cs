@@ -214,7 +214,7 @@ namespace AvtoMnenie.Controllers
       }
       ViewBag.id = NewsID;
       return View("~/Views/Home/ShowNews.cshtml");
-      return RedirectToAction("ShowNews", new { id = NewsID });
+      //return RedirectToAction("ShowNews", new { id = NewsID });
     }
 
     [AllowAnonymous]
